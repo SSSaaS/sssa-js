@@ -107,12 +107,40 @@ var _sssa_utils = (function (root) {
         return bigInt(hex_data, 16);
     }
 
+    function gcd(a, b) {
+        if (b.compare(bigInt(0)) == 0) {
+            return [a, bigInt(1), bigInt(0)];
+        }
+
+        n = a.divide(b);
+        c = a.mod(b).add(b).mod(b);
+        r = gcd(b, c);
+
+        return [r[0], r[2], r[1].subtract(r[2].multiply(n))];
+    }
+
+    function mod_inverse(number) {
+        var value = gcd(prime, number.mod(prime));
+        var remainder = value[2];
+
+        if (number.compare(0) == -1) {
+            remainder = remainder.multiply(-1);
+        }
+
+        console.log(remainder.toString());
+
+        return remainder.mod(prime).add(prime).mod(prime);
+    }
+
     return {
+        'prime': prime,
         'random': random,
         'split_ints': split_ints,
         'merge_ints': merge_ints,
         'to_base64': to_base64,
         'from_base64': from_base64,
+        'gcd': gcd,
+        'mod_inverse': mod_inverse,
     }
 }(this));
 
