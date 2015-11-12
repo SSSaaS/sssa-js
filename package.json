@@ -1,0 +1,37 @@
+{
+  "name": "sssa-js",
+  "version": "0.0.1",
+  "description": "Helper cryptography module for JavaScript",
+  "main": "sssa.js",
+  "scripts": {
+    "test": "./node_modules/karma/bin/karma start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SSSaaS/sssa-js.git"
+  },
+  "keywords": [
+    "javascript",
+    "sssa",
+    "shamir",
+    "secret",
+    "sharing",
+    "crypto"
+  ],
+  "author": "Alexander Scheel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SSSaaS/sssa-js/issues"
+  },
+  "homepage": "https://github.com/SSSaaS/sssa-js#readme",
+  "devDependencies": {
+    "big-integer": "^1.6.5",
+    "get-random-values": "^1.1.1",
+    "jasmine-core": "^2.3.4",
+    "karma": "^0.13.15",
+    "karma-chrome-launcher": "^0.2.1",
+    "karma-jasmine": "^0.3.6",
+    "utf-8": "^1.0.0",
+    "utf8": "^2.1.1"
+  }
+}
