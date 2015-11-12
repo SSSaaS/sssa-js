@@ -2,8 +2,6 @@ if (typeof require === "function") {
     var bigInt = require("big-integer");
     var getRandomValues = require('get-random-values');
     var UTF8 = require('utf-8');
-} else {
-
 }
 
 var _sssa_utils = (function (root) {
@@ -66,15 +64,59 @@ var _sssa_utils = (function (root) {
         return UTF8.getStringFromBytes(bytes);
     }
 
+    function evaluate_polynomial(coefficients, value) {
+        var result = bigInt(coefficients[0]),
+            i = 0,
+            tmp = bigInt(0);
+
+        for (i = 0; i < coefficients.length; i++) {
+            result = result.add(value.modPow(s, prime).multiply(coefficients[i]).mod(prime));
+        }
+
+        return result.mod(prime);
+    }
+
+    function to_base64(number) {
+        var hex_data = number.toString(16),
+            result = "",
+            i = 0;
+
+        hex_data = Array(64 - hex_data.length + 1).join('0') + hex_data;
+
+        for (i = 0; i < hex_data.length/2; i++) {
+            result += String.fromCharCode(parseInt(hex_data.substring(i*2, (i+1)*2), 16));
+        }
+
+        return btoa(result);
+    }
+
+    function from_base64(number) {
+        var bytes = atob(number),
+            hex_data = "",
+            tmp = "",
+            i = 0;
+
+        for (i = 0; i < bytes.length; i++) {
+            temp = bytes.charCodeAt(i).toString(16);
+            temp = Array(2 - (temp.length % 3) + 1).join(0) + temp;
+            hex_data += temp;
+        }
+
+        hex_data = hex_data.replace(/^(00){1,}/, '');
+
+        return bigInt(hex_data, 16);
+    }
+
     return {
         'random': random,
         'split_ints': split_ints,
         'merge_ints': merge_ints,
+        'to_base64': to_base64,
+        'from_base64': from_base64,
     }
 }(this));
 
 var _sssa = (function(root) {
-    console.log(_sssa_utils);
     var utils = _sssa_utils;
 
     function create(minimum, shares, raw) {
@@ -181,7 +223,8 @@ var _sssa = (function(root) {
 
 // Node.js check
 if (typeof module !== "undefined" && module.hasOwnProperty("exports")) {
-    module.exports = _sssa;
+    var sssa = _sssa;
+    module.exports = sssa;
 } else {
     sssa = _sssa;
 }
