@@ -66,11 +66,11 @@ var _sssa_utils = (function (root) {
 
     function evaluate_polynomial(coefficients, value) {
         var result = bigInt(coefficients[0]),
-            i = 0,
+            i = 1,
             tmp = bigInt(0);
 
-        for (i = 0; i < coefficients.length; i++) {
-            result = result.add(value.modPow(s, prime).multiply(coefficients[i]).mod(prime));
+        for (i = 1; i < coefficients.length; i++) {
+            result = result.add(value.pow(i, prime).mod(prime).add(prime).mod(prime).multiply(coefficients[i]).mod(prime).add(prime).mod(prime));
         }
 
         return result.mod(prime);
@@ -83,15 +83,17 @@ var _sssa_utils = (function (root) {
 
         hex_data = Array(64 - hex_data.length + 1).join('0') + hex_data;
 
+        console.log(hex_data.length);
+
         for (i = 0; i < hex_data.length/2; i++) {
             result += String.fromCharCode(parseInt(hex_data.substring(i*2, (i+1)*2), 16));
         }
 
-        return btoa(result);
+        return btoa(result).replace(/\//g, '_').replace(/\+/g, '-');
     }
 
     function from_base64(number) {
-        var bytes = atob(number),
+        var bytes = atob(number.replace(/_/g, '/').replace(/-/g, '+')),
             hex_data = "",
             tmp = "",
             i = 0;
@@ -108,11 +110,15 @@ var _sssa_utils = (function (root) {
     }
 
     function gcd(a, b) {
+        var n = bigInt(0),
+            c = bigInt(0),
+            r = bigInt(0);
+
         if (b.compare(bigInt(0)) == 0) {
             return [a, bigInt(1), bigInt(0)];
         }
 
-        n = a.divide(b);
+        n = a.divmod(b).quotient;
         c = a.mod(b).add(b).mod(b);
         r = gcd(b, c);
 
@@ -127,8 +133,6 @@ var _sssa_utils = (function (root) {
             remainder = remainder.multiply(-1);
         }
 
-        console.log(remainder.toString());
-
         return remainder.mod(prime).add(prime).mod(prime);
     }
 
@@ -137,6 +141,7 @@ var _sssa_utils = (function (root) {
         'random': random,
         'split_ints': split_ints,
         'merge_ints': merge_ints,
+        'evaluate_polynomial': evaluate_polynomial,
         'to_base64': to_base64,
         'from_base64': from_base64,
         'gcd': gcd,
@@ -148,11 +153,11 @@ var _sssa = (function(root) {
     var utils = _sssa_utils;
 
     function create(minimum, shares, raw) {
-        if (minimum < shares) {
+        if (minimum > shares) {
             return;
         }
 
-        var secret = utils.split_int(raw),
+        var secret = utils.split_ints(raw),
             numbers = [bigInt(0)],
             polynomial = [],
             result = [],
@@ -162,9 +167,9 @@ var _sssa = (function(root) {
         for (i in secret) {
             polynomial.push([secret[i]]);
             for (j = 1; j < minimum; j++) {
-                value = util.random();
+                value = utils.random();
                 while (value in numbers) {
-                    value = util.random();
+                    value = utils.random();
                 }
                 numbers.push(value);
 
@@ -172,20 +177,21 @@ var _sssa = (function(root) {
             }
         }
 
+
         for (i = 0; i < shares; i++) {
             for (j in secret) {
-                value = util.random();
+                value = utils.random();
                 while (value in numbers) {
-                    value = util.random();
+                    value = utils.random();
                 }
                 numbers.push(value);
 
                 if (typeof result[i] !== typeof "string") {
                     result[i] = "";
-                } else {
-                    result[i] += utils.to_base64(value);
-                    result[i] += utils.to_base64(utils.evaluate_polynomial(polynomial[j], value));
                 }
+
+                result[i] += utils.to_base64(value);
+                result[i] += utils.to_base64(utils.evaluate_polynomial(polynomial[j], value));
             }
         }
 
@@ -231,16 +237,16 @@ var _sssa = (function(root) {
 
                 for (k in secrets) {
                     if (k !== i) {
-                        numerator = numerator.multiply(secrets[k][j][0].multiply(-1)).mod(utils.prime);
-                        denominator = denominator.multiply(origin.subtract(secrets[k][j][0])).mod(utils.prime);
+                        numerator = numerator.multiply(secrets[k][j][0].multiply(-1)).mod(utils.prime).add(utils.prime).mod(utils.prime);
+                        denominator = denominator.multiply(origin.subtract(secrets[k][j][0])).mod(utils.prime).add(utils.prime).mod(utils.prime);
                     }
                 }
 
-                secret[j] = secret[j].add(originy.multiply(numerator).mod(utils.prime).multiply(denominator).mod(utils.prime)).mod(utils.prime);
+                secret[j] = secret[j].add(originy.multiply(numerator).mod(utils.prime).add(utils.prime).mod(utils.prime).multiply(utils.mod_inverse(denominator)).mod(utils.prime).add(utils.prime).mod(utils.prime)).mod(utils.prime).add(utils.prime).mod(utils.prime);
             }
         }
 
-        return utils.merge_int(secret);
+        return utils.merge_ints(secret);
     }
 
     return sssa = {
@@ -255,4 +261,9 @@ if (typeof module !== "undefined" && module.hasOwnProperty("exports")) {
     module.exports = sssa;
 } else {
     sssa = _sssa;
+}
+
+if (typeof testing === "undefined" || testing == false) {
+    _sssa = undefined;
+    _sssa_utils = undefined;
 }
