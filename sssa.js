@@ -3,7 +3,7 @@ if (typeof require === "function") {
     var getRandomValues = require('get-random-values');
     var UTF8 = require('utf-8');
     var window = require('global/window');
-    
+
     /*
      * Implements base64 decode and encode in browser that
      * it hasn't support of window.btoa and window.atob
@@ -213,13 +213,9 @@ var _sssa_utils = (function (root) {
 
         hex_data = Array(64 - hex_data.length + 1).join('0') + hex_data;
 
-        console.log("hex_data: " + hex_data);
-
         for (i = 0; i < hex_data.length/2; i++) {
             result += String.fromCharCode(parseInt(hex_data.substring(i*2, (i+1)*2), 16));
         }
-
-        console.log("btoa:     " + btoa(result).length);
 
         return btoa(result).replace(/\//g, '_').replace(/\+/g, '-');
     }
@@ -390,7 +386,12 @@ var _sssa = (function(root) {
 var sssa = _sssa;
 module.exports = sssa;
 
-if (typeof testing === "undefined" || testing == false) {
+if (typeof global.testing === "undefined" || global.testing == false) {
+    _sssa = undefined;
+    _sssa_utils = undefined;
+} else {
+    global._sssa_utils = _sssa_utils;
+    global._sssa = _sssa;
     _sssa = undefined;
     _sssa_utils = undefined;
 }
