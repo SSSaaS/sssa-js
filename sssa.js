@@ -196,8 +196,7 @@ var _sssa_utils = (function (root) {
 
     function evaluate_polynomial(coefficients, value) {
         var result = bigInt(coefficients[0]),
-            i = 1,
-            tmp = bigInt(0);
+            i = 1;
 
         for (i = 1; i < coefficients.length; i++) {
             result = result.add(value.pow(i, prime).mod(prime).add(prime).mod(prime).multiply(coefficients[i]).mod(prime).add(prime).mod(prime));
@@ -223,7 +222,7 @@ var _sssa_utils = (function (root) {
     function from_base64(number) {
         var bytes = atob(number.replace(/_/g, '/').replace(/-/g, '+')),
             hex_data = "",
-            tmp = "",
+            temp = "",
             i = 0;
 
         for (i = 0; i < bytes.length; i++) {
@@ -386,12 +385,10 @@ var _sssa = (function(root) {
 var sssa = _sssa;
 module.exports = sssa;
 
-if (typeof global.testing === "undefined" || global.testing == false) {
-    _sssa = undefined;
-    _sssa_utils = undefined;
-} else {
+if (typeof global.testing !== "undefined" && global.testing === true) {x
     global._sssa_utils = _sssa_utils;
     global._sssa = _sssa;
-    _sssa = undefined;
-    _sssa_utils = undefined;
 }
+
+_sssa = undefined;
+_sssa_utils = undefined;
