@@ -4,7 +4,7 @@
   "description": "Helper cryptography module for JavaScript",
   "main": "sssa.js",
   "scripts": {
-    "test": "./node_modules/karma/bin/karma start"
+    "test": "node ./test/sssa.js"
   },
   "repository": {
     "type": "git",
@@ -25,13 +25,12 @@
   },
   "homepage": "https://github.com/SSSaaS/sssa-js#readme",
   "devDependencies": {
+    "browserify": "^12.0.1"
+  },
+  "dependencies": {
     "big-integer": "^1.6.5",
     "get-random-values": "^1.1.1",
-    "jasmine-core": "^2.3.4",
-    "karma": "^0.13.15",
-    "karma-chrome-launcher": "^0.2.1",
-    "karma-jasmine": "^0.3.6",
-    "utf-8": "^1.0.0",
-    "utf8": "^2.1.1"
+    "global": "^4.3.0",
+    "utf-8": "^1.0.0"
   }
 }
