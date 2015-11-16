@@ -385,7 +385,7 @@ var _sssa = (function(root) {
 var sssa = _sssa;
 module.exports = sssa;
 
-if (typeof global.testing !== "undefined" && global.testing === true) {x
+if (typeof global.testing !== "undefined" && global.testing === true) {
     global._sssa_utils = _sssa_utils;
     global._sssa = _sssa;
 }
