@@ -1,6 +1,7 @@
 # sssa-js
 An implementation of Shamir's Secret Sharing Algorithm in JavaScript
-Currently working in Firefox, Chrome, Safari, Opera, Edge, and Node.js
+Currently working in Firefox, Chrome, Safari, Opera, Edge,
+and Node.js v0.11 or later.
 
     Copyright (C) 2015 Alexander Scheel, Joel May, Matthew Burket  
     See Contributors.md for a complete list of contributors.  
