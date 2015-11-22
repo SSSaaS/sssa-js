@@ -1,4 +1,6 @@
 # sssa-js
+[![Build Status](https://travis-ci.org/SSSaaS/sssa-js.svg?branch=master)](https://travis-ci.org/SSSaaS/sssa-js)
+
 An implementation of Shamir's Secret Sharing Algorithm in JavaScript
 Currently working in Firefox, Chrome, Safari, Opera, Edge, and Node.js
 
