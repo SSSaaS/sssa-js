@@ -14,7 +14,6 @@ if (typeof require === "function") {
      * http://github.com/carlo/jquery-base64
      * Adapted by SeViR in DIGIO
      */
-
     if (!window.atob && !window.btoa){
      ( function( window ) {
         var _PADCHAR = "=",
@@ -195,14 +194,14 @@ var _sssa_utils = (function (root) {
     }
 
     function evaluate_polynomial(coefficients, value) {
-        var result = bigInt(coefficients[0]),
-            i = 1;
+        var result = bigInt(coefficients[coefficients.length-1]),
+            i = coefficients.length-2;
 
-        for (i = 1; i < coefficients.length; i++) {
-            result = result.add(value.pow(i, prime).mod(prime).add(prime).mod(prime).multiply(coefficients[i]).mod(prime).add(prime).mod(prime));
+        for (i = coefficients.length-2; i >= 0; i--) {
+            result = result.multiply(value).add(coefficients[i]).mod(prime).add(prime).mod(prime);
         }
 
-        return result.mod(prime);
+        return result;
     }
 
     function to_base64(number) {
